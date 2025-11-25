@@ -1,0 +1,61 @@
+{
+    "name": "Mokua Family Farm Management",
+    "short_name": "Mokua Farm",
+    "description": "Complete farm management system for the Mokua family",
+    "start_url": "/dashboard",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#10b981",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/screenshot-mobile.png",
+            "sizes": "540x720",
+            "type": "image/png"
+        }
+    ],
+    "categories": [
+        "productivity",
+        "business"
+    ],
+    "shortcuts": [
+        {
+            "name": "Add Task",
+            "short_name": "Task",
+            "description": "Create a new task",
+            "url": "/dashboard/tasks",
+            "icons": [
+                {
+                    "src": "/icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Record Sale",
+            "short_name": "Sale",
+            "description": "Record a new sale",
+            "url": "/dashboard/sales",
+            "icons": [
+                {
+                    "src": "/icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ]
+}
