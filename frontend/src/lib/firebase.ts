@@ -13,7 +13,7 @@ const firebaseConfig = {
 
 // Only initialize if config is provided and app hasn't been initialized
 let app;
-let storage;
+let storage: any;
 
 try {
     if (!getApps().length && firebaseConfig.apiKey) {
