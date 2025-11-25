@@ -12,7 +12,8 @@ const protect = asyncHandler(async (req, res, next) => {
         try {
             token = req.headers.authorization.split(' ')[1];
 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const secret = process.env.JWT_SECRET || 'dev-secret';
+            const decoded = jwt.verify(token, secret);
 
             const userDoc = await db.collection('users').doc(decoded.id).get();
 
