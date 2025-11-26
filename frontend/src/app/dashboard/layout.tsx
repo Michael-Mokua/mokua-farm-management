@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import NotificationBell from "@/components/NotificationBell";
 import GlobalSearch from "@/components/GlobalSearch";
+import { Badge } from "@/components/ui/badge";
 
 export default function DashboardLayout({
     children,
@@ -148,14 +149,19 @@ export default function DashboardLayout({
                             </div>
                         </div>
 
-                        <div className="border-t pt-4">
-                            <div className="px-3 py-2 mb-2">
-                                <p className="text-sm font-medium">{user.name}</p>
-                                <p className="text-xs text-muted-foreground capitalize">{user.role}</p>
+                        <div className="border-t pt-4 bg-muted/30 rounded-lg p-3">
+                            <div className="px-3 py-2 mb-3">
+                                <p className="text-sm font-semibold">{user.name}</p>
+                                <p className="text-xs text-muted-foreground">{user.email}</p>
+                                <p className="text-xs mt-1">
+                                    <Badge variant={user.role === 'admin' ? 'default' : 'secondary'} className="text-xs">
+                                        {user.role}
+                                    </Badge>
+                                </p>
                             </div>
                             <Button
-                                variant="outline"
-                                className="w-full justify-start gap-3 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                variant="destructive"
+                                className="w-full justify-start gap-3"
                                 onClick={logout}
                             >
                                 <LogOut className="h-4 w-4" />

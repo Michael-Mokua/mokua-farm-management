@@ -98,6 +98,19 @@ export default function UsersPage() {
 
     return (
         <div className="p-8 space-y-8">
+            {/* Debug Info - Shows your current role */}
+            <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <p className="text-sm">
+                    <strong>Logged in as:</strong> {user?.name} ({user?.email})<br />
+                    <strong>Your Role:</strong> <span className="font-bold text-blue-600">{user?.role}</span>
+                </p>
+                {user?.role !== 'admin' && (
+                    <p className="text-sm text-amber-600 mt-2">
+                        ⚠️ You need admin role to add users. Contact Michael to upgrade your account.
+                    </p>
+                )}
+            </div>
+
             <div className="flex justify-between items-center">
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight">User Management</h2>
@@ -105,10 +118,15 @@ export default function UsersPage() {
                         Manage users and their roles within the system.
                     </p>
                 </div>
-                <Button onClick={() => setShowAddModal(true)}>
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    Add User
-                </Button>
+                {user?.role === 'admin' && (
+                    <Button
+                        onClick={() => setShowAddModal(true)}
+                        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg"
+                    >
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        Add User
+                    </Button>
+                )}
             </div>
 
             <Card>
