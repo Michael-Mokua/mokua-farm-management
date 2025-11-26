@@ -66,26 +66,41 @@ export default function Home() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-green-50 via-white to-white dark:from-green-900/20 dark:via-background dark:to-background">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl/none bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                  Mokua Family Farm
+        <section className="relative w-full py-20 md:py-32 lg:py-40 xl:py-56 overflow-hidden">
+          {/* Animated Background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950">
+            <div className="absolute top-0 -left-4 w-72 h-72 bg-green-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+            <div className="absolute top-0 -right-4 w-72 h-72 bg-emerald-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+            <div className="absolute -bottom-8 left-20 w-72 h-72 bg-teal-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+          </div>
+
+          <div className="container relative z-10 px-4 md:px-6">
+            <div className="flex flex-col items-center space-y-8 text-center">
+              <div className="space-y-6">
+                <div className="inline-block">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-green-100 dark:bg-green-900/30 px-4 py-2 text-sm font-medium text-green-700 dark:text-green-300 ring-1 ring-inset ring-green-600/20">
+                    🌾 Mselele, Joska
+                  </span>
+                </div>
+                <h1 className="text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl/none">
+                  <span className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                    Mokua Family Farm
+                  </span>
                 </h1>
-                <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
-                  Smart Farm Management for Mselele, Joska. Integrating tradition with technology for a sustainable future.
+                <p className="mx-auto max-w-[700px] text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+                  Where <span className="font-semibold text-green-600">tradition</span> meets <span className="font-semibold text-emerald-600">technology</span>.
+                  Cultivating excellence in sustainable agriculture.
                 </p>
               </div>
-              <div className="flex gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Link href="/shop">
-                  <Button size="lg" className="h-12 px-8 rounded-full bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-green-500/25 transition-all">
-                    Visit Our Shop <ArrowRight className="ml-2 h-4 w-4" />
+                  <Button size="lg" className="h-14 px-10 rounded-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-xl hover:shadow-2xl hover:shadow-green-500/30 transition-all transform hover:scale-105 text-base font-semibold">
+                    🛒 Visit Our Shop <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
                 <Link href="/login">
-                  <Button size="lg" variant="outline" className="h-12 px-8 rounded-full">
-                    Family Portal
+                  <Button size="lg" variant="outline" className="h-14 px-10 rounded-full border-2 border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-950 transition-all transform hover:scale-105 text-base font-semibold">
+                    👨‍👩‍👦‍👦 Family Portal
                   </Button>
                 </Link>
               </div>
@@ -94,23 +109,25 @@ export default function Home() {
         </section>
 
         {/* Family Profiles Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted/30">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-              <div className="inline-block rounded-lg bg-green-100 dark:bg-green-900/30 px-3 py-1 text-sm text-green-600 dark:text-green-400">
-                Our Team
+        <section className="w-full py-16 md:py-24 lg:py-32 bg-gradient-to-b from-white via-green-50/30 to-white dark:from-background dark:via-green-950/10 dark:to-background">
+          <div className="container px-4 md:px-6 max-w-7xl mx-auto">
+            <div className="flex flex-col items-center justify-center space-y-6 text-center mb-16">
+              <div className="inline-block rounded-full bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 px-6 py-2 text-sm font-semibold text-green-700 dark:text-green-300 ring-1 ring-inset ring-green-600/20">
+                ✨ Our Team
               </div>
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Meet the Family</h2>
-              <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                The dedicated minds behind Mselele Farm, each bringing unique expertise to our growth.
+              <h2 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                Meet the Family
+              </h2>
+              <p className="max-w-[700px] text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                The dedicated minds behind Mselele Farm, each bringing unique expertise to our sustainable future.
               </p>
             </div>
 
-            <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
+            <div className="flex justify-center">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
                 {/* Standard Family Cards */}
                 {familyMembers.map((member, index) => (
-                  <Card key={index} className={`border-2 transition-all hover:shadow-lg ${member.color}`}>
+                  <Card key={index} className={`border-2 transition-all hover:shadow-xl hover:-translate-y-2 duration-300 ${member.color} w-full`}>
                     <CardHeader>
                       <div className="mb-2 w-12 h-12 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center shadow-sm">
                         <member.Icon className={`h-6 w-6 ${member.iconColor}`} />
