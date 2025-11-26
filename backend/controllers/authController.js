@@ -13,6 +13,7 @@ const authUser = asyncHandler(async (req, res) => {
     const snapshot = await usersRef.where('email', '==', email).limit(1).get();
 
     if (snapshot.empty) {
+        console.log(`Login failed: User not found for email ${email}`);
         res.status(401);
         throw new Error('Invalid email or password');
     }
@@ -31,6 +32,7 @@ const authUser = asyncHandler(async (req, res) => {
             token: generateToken(user.id),
         });
     } else {
+        console.log(`Login failed: Password mismatch for email ${email}`);
         res.status(401);
         throw new Error('Invalid email or password');
     }
@@ -47,6 +49,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const existingUser = await usersRef.where('email', '==', email).limit(1).get();
 
     if (!existingUser.empty) {
+        console.log(`Registration failed: User already exists for email ${email}`);
         res.status(400);
         throw new Error('User already exists');
     }

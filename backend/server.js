@@ -42,6 +42,26 @@ app.use('/api/sales', salesRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/search', searchRoutes);
 
+app.get('/api/health', async (req, res) => {
+    try {
+        // Try to read from Firestore to verify connection
+        await db.collection('users').limit(1).get();
+        res.json({
+            status: 'ok',
+            firestore: 'connected',
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('Health check failed:', error);
+        res.status(500).json({
+            status: 'error',
+            firestore: 'disconnected',
+            error: error.message,
+            timestamp: new Date().toISOString()
+        });
+    }
+});
+
 app.get('/', (req, res) => {
     res.send('Mselele Farm Management System API is running...');
 });
