@@ -54,11 +54,11 @@ export default function Home() {
             <span>Mselele Farm</span>
           </div>
           <div className="ml-auto flex gap-4">
-            <Link href="/login">
-              <Button variant="ghost">Login</Button>
+            <Link href="/shop">
+              <Button variant="outline">Shop</Button>
             </Link>
-            <Link href="/register">
-              <Button>Get Started</Button>
+            <Link href="/login">
+              <Button>Family Login</Button>
             </Link>
           </div>
         </div>
@@ -77,10 +77,15 @@ export default function Home() {
                   Smart Farm Management for Mselele, Joska. Integrating tradition with technology for a sustainable future.
                 </p>
               </div>
-              <div className="space-x-4 pt-4">
-                <Link href="/login">
+              <div className="flex gap-4 pt-4">
+                <Link href="/shop">
                   <Button size="lg" className="h-12 px-8 rounded-full bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-green-500/25 transition-all">
-                    Access Dashboard <ArrowRight className="ml-2 h-4 w-4" />
+                    Visit Our Shop <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button size="lg" variant="outline" className="h-12 px-8 rounded-full">
+                    Family Portal
                   </Button>
                 </Link>
               </div>
@@ -101,79 +106,114 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {/* Standard Family Cards */}
-              {familyMembers.map((member, index) => (
-                <Card key={index} className={`border-2 transition-all hover:shadow-lg ${member.color}`}>
-                  <CardHeader>
-                    <div className="mb-2 w-12 h-12 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center shadow-sm">
-                      <member.Icon className={`h-6 w-6 ${member.iconColor}`} />
+            <div className="max-w-7xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
+                {/* Standard Family Cards */}
+                {familyMembers.map((member, index) => (
+                  <Card key={index} className={`border-2 transition-all hover:shadow-lg ${member.color}`}>
+                    <CardHeader>
+                      <div className="mb-2 w-12 h-12 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center shadow-sm">
+                        <member.Icon className={`h-6 w-6 ${member.iconColor}`} />
+                      </div>
+                      <CardTitle className="text-xl">{member.name}</CardTitle>
+                      <CardDescription className="font-medium text-foreground/80">{member.role}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        {member.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {member.skills.map((skill) => (
+                          <Badge key={skill} variant="secondary" className="bg-white/50 dark:bg-black/20">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+
+                {/* Michael's Special "Glazed" Card */}
+                <Card className="relative overflow-hidden border-2 border-transparent bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white shadow-xl transform hover:scale-105 transition-all duration-300">
+                  <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+                  <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/20 rounded-full blur-3xl"></div>
+                  <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-black/20 rounded-full blur-3xl"></div>
+
+                  <CardHeader className="relative z-10">
+                    <div className="mb-2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
+                      <Code className="h-6 w-6 text-white" />
                     </div>
-                    <CardTitle className="text-xl">{member.name}</CardTitle>
-                    <CardDescription className="font-medium text-foreground/80">{member.role}</CardDescription>
+                    <CardTitle className="text-xl font-bold">Michael Ogutu</CardTitle>
+                    <CardDescription className="font-medium text-white/90">Tech Developer & Innovator</CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      {member.description}
+                  <CardContent className="relative z-10">
+                    <p className="text-sm text-white/90 mb-4 font-medium leading-relaxed">
+                      The digital architect engineering our smart solutions. From AI automation to this very platform, bridging agriculture with cutting-edge technology.
                     </p>
-                    <div className="flex flex-wrap gap-2">
-                      {member.skills.map((skill) => (
-                        <Badge key={skill} variant="secondary" className="bg-white/50 dark:bg-black/20">
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {["Full Stack", "AI/ML", "IoT", "Cloud"].map((skill) => (
+                        <Badge key={skill} className="bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-sm">
                           {skill}
                         </Badge>
                       ))}
                     </div>
+
+                    <div className="flex gap-3 mt-auto pt-2 border-t border-white/20">
+                      <a
+                        href="https://instagram.com/whoismichaia"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm"
+                        title="Follow on Instagram"
+                      >
+                        <Instagram className="h-5 w-5" />
+                      </a>
+                      <a
+                        href="https://wa.me/254110254359"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-green-500/80 hover:bg-green-500 transition-colors backdrop-blur-sm font-medium text-sm"
+                      >
+                        <Phone className="h-4 w-4" />
+                        <span>Chat on WhatsApp</span>
+                      </a>
+                    </div>
                   </CardContent>
                 </Card>
-              ))}
+              </div>
+            </div>
+          </div>
 
-              {/* Michael's Special "Glazed" Card */}
-              <Card className="relative overflow-hidden border-2 border-transparent bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white shadow-xl transform hover:scale-105 transition-all duration-300">
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/20 rounded-full blur-3xl"></div>
-                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-black/20 rounded-full blur-3xl"></div>
-
-                <CardHeader className="relative z-10">
-                  <div className="mb-2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
-                    <Code className="h-6 w-6 text-white" />
-                  </div>
-                  <CardTitle className="text-xl font-bold">Michael Ogutu</CardTitle>
-                  <CardDescription className="font-medium text-white/90">Tech Developer & Innovator</CardDescription>
-                </CardHeader>
-                <CardContent className="relative z-10">
-                  <p className="text-sm text-white/90 mb-4 font-medium leading-relaxed">
-                    The digital architect engineering our smart solutions. From AI automation to this very platform, bridging agriculture with cutting-edge technology.
-                  </p>
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {["Full Stack", "AI/ML", "IoT", "Cloud"].map((skill) => (
-                      <Badge key={skill} className="bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-sm">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <div className="flex gap-3 mt-auto pt-2 border-t border-white/20">
-                    <a
-                      href="https://instagram.com/whoismichaia"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm"
-                      title="Follow on Instagram"
-                    >
-                      <Instagram className="h-5 w-5" />
-                    </a>
-                    <a
-                      href="https://wa.me/254110254359"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-green-500/80 hover:bg-green-500 transition-colors backdrop-blur-sm font-medium text-sm"
-                    >
-                      <Phone className="h-4 w-4" />
-                      <span>Chat on WhatsApp</span>
-                    </a>
-                  </div>
-                </CardContent>
-              </Card>
+          {/* Contact Information Section */}
+          <div className="container px-4 md:px-6 mt-16">
+            <div className="max-w-4xl mx-auto text-center">
+              <h3 className="text-2xl font-bold mb-8">Get In Touch</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="p-6 rounded-lg bg-card border">
+                  <p className="font-semibold text-lg mb-2">Patrick Mokua</p>
+                  <p className="text-sm text-muted-foreground mb-2">Father & Entrepreneur</p>
+                  <a href="tel:+254726366624" className="text-green-600 hover:underline flex items-center justify-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    0726 366 624
+                  </a>
+                </div>
+                <div className="p-6 rounded-lg bg-card border">
+                  <p className="font-semibold text-lg mb-2">Carolyne Nyamoita</p>
+                  <p className="text-sm text-muted-foreground mb-2">Mother & Educator</p>
+                  <a href="tel:+254728369948" className="text-green-600 hover:underline flex items-center justify-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    0728 369 948
+                  </a>
+                </div>
+                <div className="p-6 rounded-lg bg-card border">
+                  <p className="font-semibold text-lg mb-2">Fadhili Obiria</p>
+                  <p className="text-sm text-muted-foreground mb-2">Brother & Architect</p>
+                  <a href="tel:+254795535002" className="text-green-600 hover:underline flex items-center justify-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    0795 535 002
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </section>

@@ -18,7 +18,10 @@ import {
     Menu,
     X,
     DollarSign,
-    Calendar as CalendarIcon
+    Calendar as CalendarIcon,
+    BookOpen,
+    Users,
+    Store
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -54,8 +57,11 @@ export default function DashboardLayout({
         { name: "Crops", href: "/dashboard/crops", icon: Sprout },
         { name: "Livestock", href: "/dashboard/livestock", icon: Beef },
         { name: "Tasks", href: "/dashboard/tasks", icon: CalendarCheck },
-        { name: "Sales", href: "/dashboard/sales", icon: DollarSign },
         { name: "Calendar", href: "/dashboard/calendar", icon: CalendarIcon },
+        { name: "Wiki", href: "/dashboard/wiki", icon: BookOpen },
+        { name: "Contacts", href: "/dashboard/contacts", icon: Users },
+        { name: "Store", href: "/dashboard/store", icon: Store },
+        { name: "Sales", href: "/dashboard/sales", icon: DollarSign },
         { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
         { name: "Inventory", href: "/dashboard/inventory", icon: Package },
         { name: "Finance", href: "/dashboard/finance", icon: Wallet },
