@@ -140,9 +140,33 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     });
 });
 
+// @desc    Get all users
+// @route   GET /api/auth/users
+// @access  Private/Admin
+const getUsers = asyncHandler(async (req, res) => {
+    const usersRef = db.collection('users');
+    const snapshot = await usersRef.get();
+
+    const users = [];
+    snapshot.forEach(doc => {
+        const data = doc.data();
+        users.push({
+            _id: doc.id,
+            name: data.name,
+            email: data.email,
+            role: data.role,
+            phone: data.phone,
+            createdAt: data.createdAt,
+        });
+    });
+
+    res.json(users);
+});
+
 module.exports = {
     authUser,
     registerUser,
     getUserProfile,
     updateUserProfile,
+    getUsers,
 };

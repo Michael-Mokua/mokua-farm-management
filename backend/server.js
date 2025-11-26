@@ -41,6 +41,10 @@ app.use('/api/weather', weatherRoutes);
 app.use('/api/sales', salesRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/events', require('./routes/eventRoutes'));
+app.use('/api/wiki', require('./routes/wikiRoutes'));
+app.use('/api/contacts', require('./routes/contactRoutes'));
+app.use('/api/products', require('./routes/productRoutes'));
 
 app.get('/api/health', async (req, res) => {
     try {

@@ -1,77 +1,44 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import api from "@/lib/api";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Sprout, Beef, CheckCircle, DollarSign } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ChevronLeft, ChevronRight, Plus, Loader2, Calendar as CalendarIcon, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
-interface CalendarEvent {
+interface Event {
     id: string;
     title: string;
-    date: string;
-    type: 'task' | 'crop' | 'livestock' | 'sale';
-    status?: string;
+    start: string;
+    end: string;
+    type: string;
+    description?: string;
 }
 
 export default function CalendarPage() {
-    const [events, setEvents] = useState<CalendarEvent[]>([]);
-    const [currentDate, setCurrentDate] = useState(new Date());
+    const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [showModal, setShowModal] = useState(false);
+    const [newEvent, setNewEvent] = useState({
+        title: "",
+        start: new Date().toISOString().split('T')[0],
+        end: new Date().toISOString().split('T')[0],
+        type: "general",
+        description: ""
+    });
 
     useEffect(() => {
         fetchEvents();
-    }, [currentDate]);
+    }, []);
 
     const fetchEvents = async () => {
         try {
-            // Fetch from all sources and aggregate
-            const [tasksRes, cropsRes, livestockRes, salesRes] = await Promise.all([
-                api.get('/tasks').catch(() => ({ data: [] })),
-                api.get('/crops').catch(() => ({ data: [] })),
-                api.get('/livestock').catch(() => ({ data: [] })),
-                api.get('/sales').catch(() => ({ data: [] })),
-            ]);
-
-            const allEvents: CalendarEvent[] = [];
-
-            // Add tasks
-            tasksRes.data.forEach((task: any) => {
-                if (task.dueDate) {
-                    allEvents.push({
-                        id: task._id,
-                        title: task.title,
-                        date: task.dueDate,
-                        type: 'task',
-                        status: task.status
-                    });
-                }
-            });
-
-            // Add crops (planting dates)
-            cropsRes.data.forEach((crop: any) => {
-                if (crop.plantedDate) {
-                    allEvents.push({
-                        id: crop._id,
-                        title: `Plant ${crop.cropName}`,
-                        date: crop.plantedDate,
-                        type: 'crop'
-                    });
-                }
-            });
-
-            // Add sales
-            salesRes.data.forEach((sale: any) => {
-                if (sale.saleDate) {
-                    allEvents.push({
-                        id: sale._id,
-                        title: `Sale: ${sale.itemName}`,
-                        date: sale.saleDate,
-                        type: 'sale'
-                    });
-                }
-            });
-
-            setEvents(allEvents);
+            const { data } = await api.get('/events');
+            setEvents(data);
         } catch (error) {
             console.error("Failed to fetch events", error);
         } finally {
@@ -79,191 +46,201 @@ export default function CalendarPage() {
         }
     };
 
+    const handlePrevMonth = () => {
+        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    };
+
+    const handleNextMonth = () => {
+        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    };
+
+    const handleCreateEvent = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const { data } = await api.post('/events', newEvent);
+            setEvents([...events, data]);
+            setShowModal(false);
+            setNewEvent({
+                title: "",
+                start: new Date().toISOString().split('T')[0],
+                end: new Date().toISOString().split('T')[0],
+                type: "general",
+                description: ""
+            });
+        } catch (error) {
+            console.error("Failed to create event", error);
+        }
+    };
+
     const getDaysInMonth = (date: Date) => {
         const year = date.getFullYear();
         const month = date.getMonth();
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const daysInMonth = lastDay.getDate();
-        const startingDayOfWeek = firstDay.getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const firstDayOfMonth = new Date(year, month, 1).getDay();
 
         const days = [];
-        for (let i = 0; i < startingDayOfWeek; i++) {
+        // Add empty slots for previous month days
+        for (let i = 0; i < firstDayOfMonth; i++) {
             days.push(null);
         }
+        // Add days of current month
         for (let i = 1; i <= daysInMonth; i++) {
-            days.push(i);
+            days.push(new Date(year, month, i));
         }
         return days;
     };
 
-    const getEventsForDay = (day: number) => {
-        const dateStr = new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toISOString().split('T')[0];
+    const getEventsForDay = (date: Date) => {
         return events.filter(event => {
-            const eventDate = new Date(event.date).toISOString().split('T')[0];
-            return eventDate === dateStr;
+            const eventDate = new Date(event.start);
+            return (
+                eventDate.getDate() === date.getDate() &&
+                eventDate.getMonth() === date.getMonth() &&
+                eventDate.getFullYear() === date.getFullYear()
+            );
         });
     };
 
-    const previousMonth = () => {
-        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    const eventTypeColors: Record<string, string> = {
+        general: "bg-gray-500",
+        planting: "bg-green-500",
+        harvest: "bg-amber-500",
+        market: "bg-blue-500",
+        vet: "bg-red-500",
     };
-
-    const nextMonth = () => {
-        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
-    };
-
-    const getEventColor = (type: string) => {
-        const colors = {
-            task: 'bg-green-100 text-green-700 border-green-300',
-            crop: 'bg-yellow-100 text-yellow-700 border-yellow-300',
-            livestock: 'bg-blue-100 text-blue-700 border-blue-300',
-            sale: 'bg-purple-100 text-purple-700 border-purple-300',
-        };
-        return colors[type as keyof typeof colors] || colors.task;
-    };
-
-    const getEventIcon = (type: string) => {
-        const icons = {
-            task: <CheckCircle className="h-3 w-3" />,
-            crop: <Sprout className="h-3 w-3" />,
-            livestock: <Beef className="h-3 w-3" />,
-            sale: <DollarSign className="h-3 w-3" />,
-        };
-        return icons[type as keyof typeof icons] || icons.task;
-    };
-
-    const days = getDaysInMonth(currentDate);
-    const monthName = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-96">
-                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600"></div>
-            </div>
-        );
-    }
 
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                    Farm Calendar
-                </h1>
-                <p className="text-muted-foreground">View all your farm activities in one place</p>
+        <div className="p-8 space-y-8">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h2 className="text-3xl font-bold tracking-tight">Family Calendar</h2>
+                    <p className="text-muted-foreground">
+                        Schedule and track farm activities and events.
+                    </p>
+                </div>
+                <Button onClick={() => setShowModal(true)}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Event
+                </Button>
             </div>
 
-            <Card className="overflow-hidden shadow-lg">
-                {/* Calendar Header */}
-                <CardHeader className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-                    <div className="flex items-center justify-between">
-                        <button
-                            onClick={previousMonth}
-                            className="p-2 hover:bg-white/20 rounded-full transition-colors"
-                        >
-                            <ChevronLeft className="h-5 w-5" />
-                        </button>
-                        <CardTitle className="text-2xl flex items-center gap-2">
-                            <CalendarIcon className="h-6 w-6" />
-                            {monthName}
-                        </CardTitle>
-                        <button
-                            onClick={nextMonth}
-                            className="p-2 hover:bg-white/20 rounded-full transition-colors"
-                        >
-                            <ChevronRight className="h-5 w-5" />
-                        </button>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-2xl font-bold">
+                        {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+                    </CardTitle>
+                    <div className="flex items-center space-x-2">
+                        <Button variant="outline" size="icon" onClick={handlePrevMonth}>
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={handleNextMonth}>
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
                     </div>
                 </CardHeader>
-
-                <CardContent className="p-0">
-                    {/* Weekday Headers */}
-                    <div className="grid grid-cols-7 border-b bg-gray-50">
-                        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                            <div key={day} className="p-3 text-center font-semibold text-sm text-gray-600 border-r last:border-r-0">
+                <CardContent>
+                    <div className="grid grid-cols-7 gap-px bg-muted rounded-lg overflow-hidden border">
+                        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                            <div key={day} className="bg-background p-2 text-center text-sm font-medium text-muted-foreground">
                                 {day}
                             </div>
                         ))}
+                        {getDaysInMonth(currentDate).map((date, index) => (
+                            <div key={index} className="bg-background min-h-[120px] p-2 border-t hover:bg-muted/50 transition-colors">
+                                {date && (
+                                    <>
+                                        <div className={`text-sm font-medium mb-1 ${date.toDateString() === new Date().toDateString()
+                                                ? "bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center"
+                                                : "text-muted-foreground"
+                                            }`}>
+                                            {date.getDate()}
+                                        </div>
+                                        <div className="space-y-1">
+                                            {getEventsForDay(date).map((event) => (
+                                                <div
+                                                    key={event.id}
+                                                    className={`text-xs px-1.5 py-0.5 rounded text-white truncate ${eventTypeColors[event.type] || "bg-primary"}`}
+                                                    title={event.title}
+                                                >
+                                                    {event.title}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        ))}
                     </div>
+                </CardContent>
+            </Card>
 
-                    {/* Calendar Grid */}
-                    <div className="grid grid-cols-7">
-                        {days.map((day, index) => {
-                            const dayEvents = day ? getEventsForDay(day) : [];
-                            const isToday = day &&
-                                new Date().getDate() === day &&
-                                new Date().getMonth() === currentDate.getMonth() &&
-                                new Date().getFullYear() === currentDate.getFullYear();
-
-                            return (
-                                <div
-                                    key={index}
-                                    className={`min-h-[120px] p-2 border-r border-b last:border-r-0 ${!day ? 'bg-gray-50' : 'hover:bg-gray-50 transition-colors'
-                                        } ${isToday ? 'bg-blue-50' : ''}`}
-                                >
-                                    {day && (
-                                        <>
-                                            <div className={`text-sm font-semibold mb-1 ${isToday ? 'text-blue-600' : 'text-gray-700'
-                                                }`}>
-                                                {day}
-                                                {isToday && (
-                                                    <span className="ml-1 px-2 py-0.5 bg-blue-600 text-white text-xs rounded-full">
-                                                        Today
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <div className="space-y-1">
-                                                {dayEvents.slice(0, 3).map(event => (
-                                                    <div
-                                                        key={event.id}
-                                                        className={`text-xs p-1.5 rounded border ${getEventColor(event.type)} flex items-center gap-1`}
-                                                    >
-                                                        {getEventIcon(event.type)}
-                                                        <span className="truncate">{event.title}</span>
-                                                    </div>
-                                                ))}
-                                                {dayEvents.length > 3 && (
-                                                    <div className="text-xs text-muted-foreground pl-1">
-                                                        +{dayEvents.length - 3} more
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </>
-                                    )}
+            {/* Add Event Modal Overlay */}
+            {showModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                    <div className="bg-background rounded-lg shadow-lg w-full max-w-md p-6 space-y-4 border">
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-lg font-semibold">Add New Event</h3>
+                            <Button variant="ghost" size="icon" onClick={() => setShowModal(false)}>
+                                <X className="h-4 w-4" />
+                            </Button>
+                        </div>
+                        <form onSubmit={handleCreateEvent} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="title">Event Title</Label>
+                                <Input
+                                    id="title"
+                                    value={newEvent.title}
+                                    onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                                    required
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="start">Start Date</Label>
+                                    <Input
+                                        id="start"
+                                        type="date"
+                                        value={newEvent.start}
+                                        onChange={(e) => setNewEvent({ ...newEvent, start: e.target.value })}
+                                        required
+                                    />
                                 </div>
-                            );
-                        })}
+                                <div className="space-y-2">
+                                    <Label htmlFor="type">Type</Label>
+                                    <select
+                                        id="type"
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        value={newEvent.type}
+                                        onChange={(e) => setNewEvent({ ...newEvent, type: e.target.value })}
+                                    >
+                                        <option value="general">General</option>
+                                        <option value="planting">Planting</option>
+                                        <option value="harvest">Harvest</option>
+                                        <option value="market">Market Day</option>
+                                        <option value="vet">Vet Visit</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="description">Description</Label>
+                                <Input
+                                    id="description"
+                                    value={newEvent.description}
+                                    onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+                                />
+                            </div>
+                            <div className="flex justify-end gap-2 pt-2">
+                                <Button type="button" variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
+                                <Button type="submit">Save Event</Button>
+                            </div>
+                        </form>
                     </div>
-                </CardContent>
-            </Card>
-
-            {/* Legend */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-lg">Event Types</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex flex-wrap gap-4">
-                        <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 rounded bg-green-500"></div>
-                            <span className="text-sm">Tasks</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 rounded bg-yellow-500"></div>
-                            <span className="text-sm">Crops</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 rounded bg-blue-500"></div>
-                            <span className="text-sm">Livestock</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 rounded bg-purple-500"></div>
-                            <span className="text-sm">Sales</span>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
+                </div>
+            )}
         </div>
     );
 }
