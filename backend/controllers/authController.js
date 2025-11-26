@@ -79,6 +79,49 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 });
 
+// @desc    Create a new user (Admin only - no auto-login)
+// @route   POST /api/auth/users/create
+// @access  Private/Admin
+const createUser = asyncHandler(async (req, res) => {
+    const { name, email, password, role, phone } = req.body;
+
+    if (!name || !email || !password) {
+        res.status(400);
+        throw new Error('Please provide name, email, and password');
+    }
+
+    const usersRef = db.collection('users');
+    const existingUser = await usersRef.where('email', '==', email).limit(1).get();
+
+    if (!existingUser.empty) {
+        res.status(400);
+        throw new Error('User already exists');
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const userData = {
+        name,
+        email,
+        password: hashedPassword,
+        role: role || 'viewer',
+        phone: phone || '',
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    const docRef = await usersRef.add(userData);
+
+    res.status(201).json({
+        _id: docRef.id,
+        name,
+        email,
+        role: userData.role,
+        phone: userData.phone,
+        message: 'User created successfully'
+    });
+});
+
 // @desc    Get user profile
 // @route   GET /api/auth/profile
 // @access  Private
@@ -166,6 +209,7 @@ const getUsers = asyncHandler(async (req, res) => {
 module.exports = {
     authUser,
     registerUser,
+    createUser,
     getUserProfile,
     updateUserProfile,
     getUsers,

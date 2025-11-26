@@ -12,11 +12,11 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Loader2, UserPlus } from "lucide-react";
+import { Search, Loader2, UserPlus, X } from "lucide-react";
 
 interface User {
     _id: string;
@@ -33,6 +33,16 @@ export default function UsersPage() {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        password: "",
+        role: "viewer",
+        phone: ""
+    });
+    const [creating, setCreating] = useState(false);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         if (!authLoading) {
@@ -52,6 +62,23 @@ export default function UsersPage() {
             console.error("Failed to fetch users", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleCreateUser = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setCreating(true);
+        setError("");
+
+        try {
+            await api.post('/auth/users/create', formData);
+            setShowAddModal(false);
+            setFormData({ name: "", email: "", password: "", role: "viewer", phone: "" });
+            fetchUsers();
+        } catch (err: any) {
+            setError(err.response?.data?.message || "Failed to create user");
+        } finally {
+            setCreating(false);
         }
     };
 
@@ -78,7 +105,7 @@ export default function UsersPage() {
                         Manage users and their roles within the system.
                     </p>
                 </div>
-                <Button onClick={() => router.push('/register')}>
+                <Button onClick={() => setShowAddModal(true)}>
                     <UserPlus className="mr-2 h-4 w-4" />
                     Add User
                 </Button>
@@ -141,6 +168,87 @@ export default function UsersPage() {
                     </Table>
                 </CardContent>
             </Card>
+
+            {/* Add User Modal */}
+            {showAddModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <Card className="w-full max-w-md">
+                        <CardHeader>
+                            <div className="flex justify-between items-center">
+                                <CardTitle>Add New User</CardTitle>
+                                <Button variant="ghost" size="icon" onClick={() => setShowAddModal(false)}>
+                                    <X className="h-4 w-4" />
+                                </Button>
+                            </div>
+                            <CardDescription>Create a new user account</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={handleCreateUser} className="space-y-4">
+                                {error && (
+                                    <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md">
+                                        {error}
+                                    </div>
+                                )}
+                                <div>
+                                    <label className="text-sm font-medium">Name</label>
+                                    <Input
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-sm font-medium">Email</label>
+                                    <Input
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-sm font-medium">Password</label>
+                                    <Input
+                                        type="password"
+                                        value={formData.password}
+                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-sm font-medium">Role</label>
+                                    <select
+                                        value={formData.role}
+                                        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                                        className="w-full p-2 border rounded-md"
+                                    >
+                                        <option value="viewer">Viewer</option>
+                                        <option value="field">Field Worker</option>
+                                        <option value="operations">Operations</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="text-sm font-medium">Phone (Optional)</label>
+                                    <Input
+                                        type="tel"
+                                        value={formData.phone}
+                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                    />
+                                </div>
+                                <div className="flex gap-2 justify-end">
+                                    <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>
+                                        Cancel
+                                    </Button>
+                                    <Button type="submit" disabled={creating}>
+                                        {creating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating...</> : "Create User"}
+                                    </Button>
+                                </div>
+                            </form>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
         </div>
     );
 }
