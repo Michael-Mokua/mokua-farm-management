@@ -117,15 +117,7 @@ export default function LoginPage() {
                         </Button>
                     </form>
 
-                    {/* Register Link */}
-                    <div className="mt-6 text-center">
-                        <p className="text-sm text-muted-foreground">
-                            Don't have an account?{" "}
-                            <Link href="/register" className="text-green-600 hover:text-green-700 font-medium">
-                                Create one
-                            </Link>
-                        </p>
-                    </div>
+
                 </div>
 
                 {/* Back to Home */}
