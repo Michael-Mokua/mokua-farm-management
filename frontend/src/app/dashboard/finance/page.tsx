@@ -102,9 +102,38 @@ export default function FinancePage() {
                     <h1 className="text-3xl font-bold tracking-tight">Finance Management</h1>
                     <p className="text-muted-foreground">Track income, expenses, and financial health</p>
                 </div>
-                <Button onClick={() => setShowAddModal(true)} className="gap-2">
-                    <Plus className="h-4 w-4" /> Add Transaction
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="outline" onClick={() => {
+                        const headers = ["Date", "Type", "Category", "Description", "Amount"];
+                        const csvContent = [
+                            headers.join(","),
+                            ...records.map(r => [
+                                format(new Date(r.date), 'yyyy-MM-dd'),
+                                r.type,
+                                r.category,
+                                `"${(r.description || '').replace(/"/g, '""')}"`,
+                                r.amount
+                            ].join(","))
+                        ].join("\n");
+
+                        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                        const link = document.createElement("a");
+                        if (link.download !== undefined) {
+                            const url = URL.createObjectURL(blob);
+                            link.setAttribute("href", url);
+                            link.setAttribute("download", `finance_export_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+                            link.style.visibility = 'hidden';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }
+                    }} className="gap-2">
+                        <ArrowUpRight className="h-4 w-4 rotate-45" /> Export CSV
+                    </Button>
+                    <Button onClick={() => setShowAddModal(true)} className="gap-2">
+                        <Plus className="h-4 w-4" /> Add Transaction
+                    </Button>
+                </div>
             </div>
 
             {/* Financial Summary Cards */}

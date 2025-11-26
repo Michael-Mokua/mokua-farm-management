@@ -21,13 +21,15 @@ import {
     Calendar as CalendarIcon,
     BookOpen,
     Users,
-    Store
+    Store,
+    Settings
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import NotificationBell from "@/components/NotificationBell";
 import GlobalSearch from "@/components/GlobalSearch";
 import { Badge } from "@/components/ui/badge";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function DashboardLayout({
     children,
@@ -68,6 +70,7 @@ export default function DashboardLayout({
         { name: "Finance", href: "/dashboard/finance", icon: Wallet },
         { name: "House", href: "/dashboard/house", icon: Home },
         { name: "Weather", href: "/dashboard/weather", icon: CloudSun },
+        { name: "Settings", href: "/dashboard/settings", icon: Settings },
     ];
 
     return (
@@ -178,7 +181,10 @@ export default function DashboardLayout({
                             <Menu className="h-5 w-5" />
                         </Button>
                         <div className="flex-1" />
-                        <NotificationBell />
+                        <div className="flex items-center gap-2">
+                            <ModeToggle />
+                            <NotificationBell />
+                        </div>
                     </header>
                     <main className="flex-1 overflow-y-auto p-6">
                         {children}

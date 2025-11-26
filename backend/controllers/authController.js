@@ -167,6 +167,11 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     if (bio !== undefined) updateData.bio = bio;
     if (profileImage !== undefined) updateData.profileImage = profileImage;
 
+    if (req.body.password) {
+        const salt = await bcrypt.genSalt(10);
+        updateData.password = await bcrypt.hash(req.body.password, salt);
+    }
+
     await userRef.update(updateData);
 
     const updated = await userRef.get();
