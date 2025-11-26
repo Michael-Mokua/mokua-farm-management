@@ -166,7 +166,7 @@ export default function AnalyticsPage() {
                                     <XAxis dataKey="category" tick={{ fontSize: 12 }} />
                                     <YAxis tick={{ fontSize: 12 }} />
                                     <Tooltip
-                                        contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
+                                        contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 'var(--radius)' }}
                                         formatter={(value: any) => `KES ${value.toLocaleString()}`}
                                     />
                                     <Bar dataKey="amount" fill="#10b981" radius={[8, 8, 0, 0]} />
