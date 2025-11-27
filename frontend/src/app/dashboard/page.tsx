@@ -225,6 +225,11 @@ export default function DashboardPage() {
                                 Add Animal
                             </Button>
                         </Link>
+                        <Link href="/dashboard/users">
+                            <Button className="w-full bg-indigo-600 hover:bg-indigo-700" size="lg">
+                                <UserPlus className="h-4 w-4 mr-2" /> Users
+                            </Button>
+                        </Link>
                     </div>
                 </CardContent>
             </Card>
